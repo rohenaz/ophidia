@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from "react";
 import useSoundPlugin from "use-sound";
 import { PlayFunction } from "use-sound/dist/types";
-import noticeSound from "../../../assets/audio/notice.mp3";
-import successSound from "../../../assets/audio/success.mp3";
+import noticeSound from "../../assets/audio/notice.mp3";
+import successSound from "../../assets/audio/success.mp3";
 
 type ContextValue = {
   playNotice: PlayFunction;

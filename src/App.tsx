@@ -210,11 +210,21 @@ const App: React.FC<PageProps> = () => {
       )}
       {packStatus !== FetchStatus.Loading && card && !autoStart && (
         <div className="flex-cols items-center">
-          <div className="text-3xl my-12">Open a pack. Name the cards.</div>
+          <img
+            src="https://ophidia.app/images/eye.png"
+            alt="Eye of Ophidia"
+            className="w-full max-w-lg mx-auto my-12 rounded-lg"
+          />
+          <div
+            className="text-3xl my-12"
+            style={{ fontFamily: "capitolium-2" }}
+          >
+            Open a pack. Name the cards.
+          </div>
           <div className="flex items-center">
             <div
               onClick={() => setAutostart(true)}
-              className="cursor-pointer hover:bg-indigo-600 rounded bg-indigo-400 text-white mx-auto my-12 p-2 px-4 text-lg"
+              className="transition ease-in-out cursor-pointer hover:bg-indigo-600 rounded bg-indigo-400 text-white mx-auto my-12 p-2 px-4 text-lg"
             >
               Open new pack
             </div>
