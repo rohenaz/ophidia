@@ -2,6 +2,7 @@ import { shuffle } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { useFabDb } from "./context/fabdb";
+import { useSound } from "./context/sound";
 import "./fonts.css";
 import background from "./images/monarch_bg_large.jpg";
 import EyeIcon from "./layout/icons/EyeIcon";
@@ -20,6 +21,7 @@ const App: React.FC<PageProps> = () => {
   const [resetTimer, setResetTimer] = useState<boolean>(false);
   const [pauseTimer, setPauseTimer] = useState<boolean>(false);
   const [startTimer, setStartTimer] = useState<boolean>(false);
+  const { playSuccess, playNotice } = useSound();
 
   useEffect(() => {
     if (pauseTimer) {
@@ -101,13 +103,15 @@ const App: React.FC<PageProps> = () => {
         console.log("correct!", score + 1);
         setScore(score + 1);
         setAccuracy(accuracy + 1);
+        playSuccess();
       } else {
+        playNotice();
         console.warn("wrong answer", score);
         setScore(score - 100);
       }
       next();
     },
-    [accuracy, card, next, score]
+    [accuracy, card, next, playNotice, playSuccess, score]
   );
 
   const openPack = useCallback(async () => {
@@ -212,7 +216,7 @@ const App: React.FC<PageProps> = () => {
               onClick={() => setAutostart(true)}
               className="cursor-pointer hover:bg-indigo-600 rounded bg-indigo-400 text-white mx-auto my-12 p-2 px-4 text-lg"
             >
-              My body is ready
+              Open new pack
             </div>
           </div>
         </div>
@@ -283,6 +287,11 @@ const App: React.FC<PageProps> = () => {
           </div>
         </div>
       )}
+
+      <span className="text-xs text-center">
+        This product uses TCGplayer data but is not endorsed or certified by
+        TCGplayer.
+      </span>
     </div>
   );
 };
