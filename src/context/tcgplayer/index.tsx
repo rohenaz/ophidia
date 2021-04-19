@@ -8,16 +8,35 @@ import React, {
 import { FetchStatus } from "../../types/common";
 import * as http from "../../utils/httpClient";
 
-type Card = {
-  identifier: string;
-  name: string;
-  image: string;
+type Product = {
+  productId: number;
+  lowPrice: number;
+  midPrice: number;
+  highPrice: number;
+  marketPrice: number;
+  directLowPrice: number;
+  subTypeName: string;
+};
+
+type AuthData = {
+  access_token: string;
+  ".expires": string;
+  ".issued": string;
+  expires_in: number;
+  token_type: string;
+  userName: string;
+};
+
+type ProductResults = {
+  success: boolean;
+  errors: string[];
+  results: Product[];
 };
 
 type ContextValue = {
-  pack: Card[];
-  packStatus: FetchStatus;
-  fetchPack: (set: string) => Promise<void>;
+  authStatus: FetchStatus;
+  authenticated: boolean;
+  getProduct: (identifier: string) => Promise<Product[] | null>;
 };
 
 const TcgPlayerContext = React.createContext<ContextValue | undefined>(
@@ -25,44 +44,80 @@ const TcgPlayerContext = React.createContext<ContextValue | undefined>(
 );
 
 export const TcgPlayerProvider: React.FC<{}> = (props) => {
-  const [packStatus, setPackStatus] = useState<FetchStatus>(FetchStatus.Idle);
-  const [pack, setPack] = useState<Card[]>([]);
+  const [authStatus, setAuthStatus] = useState<FetchStatus>(FetchStatus.Idle);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [authData, setAuthData] = useState<AuthData | null>(null);
 
-  const fetchPack = useCallback(async (set: string): Promise<void> => {
-    console.log("Fetching pack!", set);
+  const authenticate = useCallback(async (): Promise<void> => {
+    console.log("Authenticating!");
 
-    setPackStatus(FetchStatus.Loading);
+    setAuthStatus(FetchStatus.Loading);
 
     try {
-      const { promise } = http.customFetch<Card[]>(
-        `${endpoint}/cards/pack?set=${set}`
-      );
+      const { promise } = http.customFetch<AuthData>(`/functions/auth`);
 
-      const pack = await promise;
-
-      setPack(pack);
-      setPackStatus(FetchStatus.Success);
-      console.log("set pack to ", pack);
+      let data = await promise;
+      setAuthData(data);
+      setAuthStatus(FetchStatus.Success);
+      setAuthenticated(true);
     } catch (e) {
       console.error(e);
-      setPackStatus(FetchStatus.Error);
+      setAuthenticated(false);
+      setAuthStatus(FetchStatus.Error);
     }
   }, []);
 
+  const getProduct = useCallback(
+    async (identifier: string): Promise<Product[] | null> => {
+      console.log("Getting product!", identifier);
+
+      if (!authData || !authData.access_token) {
+        return null;
+      }
+
+      setAuthStatus(FetchStatus.Loading);
+      try {
+        const { promise } = http.customFetch<ProductResults>(
+          `/functions/product?identifier=${identifier}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${authData.access_token}`,
+            },
+          }
+        );
+
+        const products = await promise;
+
+        if (products.success) {
+          setAuthStatus(FetchStatus.Success);
+          return products.results;
+        } else {
+          return null;
+        }
+      } catch (e) {
+        console.error(e);
+        setAuthStatus(FetchStatus.Error);
+        return null;
+      }
+    },
+    [authData]
+  );
+
   // This effect will request the users when the site first loads
   useEffect(() => {
-    if (!pack?.length && packStatus === FetchStatus.Idle) {
-      fetchPack("arc");
+    if (!authenticated && authStatus === FetchStatus.Idle) {
+      authenticate();
     }
-  }, [pack, packStatus, fetchPack]);
+  }, [authStatus, authenticate, authenticated]);
 
   const value = useMemo(
     () => ({
-      packStatus,
-      pack: pack || [],
-      fetchPack,
+      authStatus,
+      authenticated,
+      getProduct,
     }),
-    [packStatus, fetchPack, pack]
+    [authStatus, authenticated, getProduct]
   );
 
   return <TcgPlayerContext.Provider value={value} {...props} />;

@@ -1,14 +1,24 @@
+import { Router } from "@reach/router";
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import Header from "./components/layout/Header";
+import GamePage from "./components/pages/GamePage";
+import LandingPage from "./components/pages/LandingPage";
+import ResultsPage from "./components/pages/ResultsPage";
 import AppContext from "./context";
+import "./fonts.css";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
     <AppContext>
-      <App />
+      <Header />
+      <Router>
+        <LandingPage path="/" />
+        <GamePage path="/game" />
+        <ResultsPage path="/results" />
+      </Router>
     </AppContext>
   </React.StrictMode>,
   document.getElementById("root")

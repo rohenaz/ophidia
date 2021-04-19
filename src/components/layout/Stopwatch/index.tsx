@@ -56,7 +56,6 @@ const Stopwatch: React.FC<Settings> = ({
 
   useEffect(() => {
     if (tick && seconds !== lastTick) {
-      console.log("last tick", lastTick, "seconds", seconds);
       tick(seconds);
       setLastTick(seconds);
     }
@@ -65,8 +64,8 @@ const Stopwatch: React.FC<Settings> = ({
   return isRunning ? (
     <>
       <div style={{ textAlign: "center" }} className="flex-cols items-center">
-        <div className="text-6xl font-semibold">{seconds}</div>
-        <span className="text-sm">Seconds</span>
+        <div className="md:text-6xl font-semibold">{seconds}</div>
+        <span className="text-xs md:text-sm">Seconds</span>
       </div>
     </>
   ) : null;
