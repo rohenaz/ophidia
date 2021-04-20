@@ -1,5 +1,6 @@
 import { LocationProvider } from "@reach/router";
 import React from "react";
+import { ConfettiProvider } from "./confetti";
 import { FabDbProvider } from "./fabdb";
 import { GameProvider } from "./game";
 import { SoundProvider } from "./sound";
@@ -14,7 +15,9 @@ const AppContext: React.FC<Props> = ({ children }) => (
       <SoundProvider>
         <LocationProvider>
           <TonicPowProvider>
-            <GameProvider>{children}</GameProvider>
+            <ConfettiProvider>
+              <GameProvider>{children}</GameProvider>
+            </ConfettiProvider>
           </TonicPowProvider>
         </LocationProvider>
       </SoundProvider>

@@ -8,6 +8,7 @@ import React, {
 import Stopwatch from "../../components/layout/Stopwatch";
 import { FetchStatus } from "../../types/common";
 import { useLocalStorage } from "../../utils/storage";
+import { useConfetti } from "../confetti";
 import { Card, useFabDb } from "../fabdb";
 import { useSound } from "../sound";
 
@@ -60,6 +61,7 @@ export const GameProvider: React.FC<{}> = (props) => {
     packStatus,
     cardDetails,
   } = useFabDb();
+  const { setConfettiActive } = useConfetti();
 
   const { playSuccess, playNotice } = useSound();
 
@@ -209,6 +211,26 @@ export const GameProvider: React.FC<{}> = (props) => {
   const card = useMemo(() => {
     return cardDetails || (pack && idx !== null ? pack[idx] : null); // currentCard;
   }, [cardDetails, pack, idx]);
+
+  useEffect(() => {
+    if (["S", "L", "M", "F"].includes(card?.rarity || "")) {
+      if (card?.rarity === "S") {
+        setScore((score || 0) + 5);
+      }
+      if (card?.rarity === "M") {
+        setScore((score || 0) + 10);
+      }
+      if (card?.rarity === "L") {
+        setScore((score || 0) + 50);
+      }
+      if (card?.rarity === "F") {
+        setScore((score || 0) + 100);
+      }
+      setTimeout(() => {
+        setConfettiActive(true);
+      }, 300);
+    }
+  }, [card, setConfettiActive, score, setScore]);
 
   const tryAnswer = useCallback(
     (name?: string, key?: string) => {

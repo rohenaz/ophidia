@@ -1,6 +1,7 @@
 import { navigate, RouteComponentProps } from "@reach/router";
 import { shuffle } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
+import { useConfetti } from "../../../context/confetti";
 import { GameStatus, useGame } from "../../../context/game";
 import atkIcon from "../../../images/attack.png";
 import defIcon from "../../../images/def.png";
@@ -27,6 +28,8 @@ const GamePage: React.FC<RouteComponentProps> = ({ children, location }) => {
     gameStatus,
     setGameStatus,
   } = useGame();
+
+  const { config, confettiActive, Confetti } = useConfetti();
 
   useEffect(() => {
     if (gameStatus !== GameStatus.Started && location?.pathname === "/game") {
@@ -311,6 +314,10 @@ const GamePage: React.FC<RouteComponentProps> = ({ children, location }) => {
         )}
       </div>
       {renderStopwatch}
+
+      <div className="fixed bottom-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <Confetti active={confettiActive} config={config} />
+      </div>
     </S.Page>
   );
 };
