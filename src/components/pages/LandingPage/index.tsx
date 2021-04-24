@@ -52,7 +52,8 @@ const LandingPage: React.FC<RouteComponentProps> = ({ children, location }) => {
           className="cursor-pointer pb-4 text-sm"
           onClick={() => setDifficulty(difficulty === 0 ? 1 : 0)}
         >
-          Difficulty: {difficulty === 0 ? "Apprentice" : "Hero"}
+          {difficulty === 0 ? "Young Hero" : "Hero"}{" "}
+          <span className="text-xs">(Switch)</span>
         </div>
         {leaderboardStatus === FetchStatus.Loading && <CenteredLoading />}
         {leaderboardStatus === FetchStatus.Success &&

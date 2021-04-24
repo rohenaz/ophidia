@@ -286,6 +286,19 @@ const GamePage: React.FC<RouteComponentProps> = ({ children, location }) => {
                   left: "3.5rem",
                 }}
               />
+              {currentKey === "cost" && (
+                <div
+                  className={`absolute rounded-full transition ease-in-out`}
+                  style={{
+                    backgroundColor:
+                      cardStatus !== FetchStatus.Success ? "#fff" : "#d41f1f",
+                    width: "1.4rem",
+                    top: "2.6rem",
+                    height: "1.4rem",
+                    right: "1.55rem",
+                  }}
+                ></div>
+              )}
             </div>
 
             <div

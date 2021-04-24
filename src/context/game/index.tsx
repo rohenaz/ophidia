@@ -87,7 +87,7 @@ export const GameProvider: React.FC<{}> = (props) => {
 
   const [resetTimer, setResetTimer] = useState<boolean>(false);
   const [pauseTimer, setPauseTimer] = useState<boolean>(false);
-
+  const [bonusCardId, setBonusCardId] = useState<string | undefined>(undefined);
   const [easyLeaderboard, setEasyLeaderboard] = useState<LeaderboardRecord[]>(
     []
   );
@@ -213,7 +213,12 @@ export const GameProvider: React.FC<{}> = (props) => {
   }, [cardDetails, pack, idx]);
 
   useEffect(() => {
-    if (["S", "L", "M", "F"].includes(card?.rarity || "")) {
+    if (
+      cardDetails?.identifier !== bonusCardId &&
+      cardStatus === FetchStatus.Success &&
+      ["S", "L", "M", "F"].includes(card?.rarity || "")
+    ) {
+      setBonusCardId(cardDetails?.identifier);
       if (card?.rarity === "S") {
         setScore((score || 0) + 5);
       }
@@ -280,7 +285,8 @@ export const GameProvider: React.FC<{}> = (props) => {
             cardDetails &&
             key &&
             cardDetails?.stats &&
-            cardDetails?.stats[key] === name
+            (cardDetails?.stats[key] === name ||
+              (!cardDetails?.stats.hasOwnProperty(key) && name === "0"))
           ) {
             console.log("matches", key, name);
             setScore(score + 1);
@@ -481,6 +487,7 @@ export const useGame = (): ContextValue => {
 const maxLeaderboardRecords = 20;
 export const maxPossibleScoreHard = 3200;
 export const maxPossibleScoreEasy = 1600;
+
 const opGameDifficultyStorageKey = `op__game_difficulty`;
 const opGameScoreStorageKey = `op__game_score`;
 const opGameStatusStorageKey = `op__game_status`;

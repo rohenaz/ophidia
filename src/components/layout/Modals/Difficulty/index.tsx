@@ -1,5 +1,6 @@
 import React from "react";
 import { useGame } from "../../../../context/game";
+import modeSelectBgImg from "../../../../images/modeSelectBg.png";
 import Button from "../../Button";
 import Modal from "../Base";
 
@@ -43,29 +44,33 @@ const DifficultyModal: React.FC<Props> = ({
 
   return (
     <Modal
-      title="Difficulty"
+      title="Choose Game Mode"
       open={open}
       onClose={onClose}
       classNames={classNames}
-      styles={styles}
+      styles={{ ...styles, modal: { width: 580, minWidth: "unset" } }}
     >
-      <div className="py-12 text-center">
-        <p className="leading-5 text-gray-500">Choose your skill level</p>
-      </div>
-
-      <div className="text-center">
-        <span className="inline-flex rounded-md shadow-sm mr-4">
+      <div
+        className="relative text-center flex items-center justify-center mx-auto rounded-lg mt-8"
+        style={{
+          background: `url('${modeSelectBgImg}')`,
+          width: "532px",
+          height: "529px",
+        }}
+      >
+        <span className="inline-flex rounded-md shadow-sm mr-20">
           <Button
             onClick={() => {
               setDifficulty(0);
               onSubmit();
             }}
             type="button"
-            text="Apprentice"
+            text="Young Hero"
             color={difficulty === 0 ? "#7356e5" : "#23233f"}
+            styles={{ text: { fontSize: "1.25rem", padding: ".5rem" } }}
           />
         </span>
-        <span className="inline-flex rounded-md shadow-sm">
+        <span className="inline-flex rounded-md shadow-sm ml-20">
           <Button
             onClick={() => {
               setDifficulty(1);
@@ -74,8 +79,19 @@ const DifficultyModal: React.FC<Props> = ({
             type="button"
             color={difficulty === 1 ? "#7356e5" : "#23233f"}
             text="Hero"
+            styles={{ text: { fontSize: "1.25rem", padding: ".5rem" } }}
           />
         </span>
+
+        <div className="text-sm p-4 absolute bottom-0 mx-auto bg-gray-700 bg-opacity-75 text-gray-300 rounded-lg mb-8">
+          <p>
+            <span className="font-semibold">Young Hero</span> - Name of the
+            cards
+          </p>
+          <p>
+            <span className="font-semibold">Hero</span> - Card names and stats
+          </p>
+        </div>
       </div>
     </Modal>
   );
